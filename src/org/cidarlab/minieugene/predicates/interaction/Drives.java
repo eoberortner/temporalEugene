@@ -2,7 +2,7 @@ package org.cidarlab.minieugene.predicates.interaction;
 
 import org.cidarlab.minieugene.constants.RuleOperator;
 import org.cidarlab.minieugene.exception.EugeneException;
-import org.cidarlab.minieugene.predicates.positional.before.AllBefore;
+import org.cidarlab.minieugene.predicates.positioning.before.AllBefore;
 import org.cidarlab.minieugene.solver.jacop.PartTypes;
 import org.cidarlab.minieugene.solver.jacop.Variables;
 

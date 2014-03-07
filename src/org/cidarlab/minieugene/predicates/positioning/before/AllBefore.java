@@ -1,8 +1,10 @@
-package org.cidarlab.minieugene.predicates.positional.before;
+package org.cidarlab.minieugene.predicates.positioning.before;
 
 import org.cidarlab.minieugene.constants.RuleOperator;
+import org.cidarlab.minieugene.dom.Component;
 import org.cidarlab.minieugene.exception.EugeneException;
 import org.cidarlab.minieugene.predicates.BinaryPredicate;
+import org.cidarlab.minieugene.predicates.positional.PositioningPredicate;
 import org.cidarlab.minieugene.solver.jacop.Variables;
 
 import JaCoP.constraints.And;
@@ -14,22 +16,17 @@ import JaCoP.constraints.XneqC;
 import JaCoP.core.IntVar;
 import JaCoP.core.Store;
 
-/* A BEFORE B 
+
+/**
  * 
- * IF the long[] array, that the evaluate() method receives, CONTAINS A and B, THEN 
- *     A's first occurrence must be before B's first occurrence
- * ELSE
- *     A BEFORE B is true
- * END IF
- * 
- * Note:
- * rules like ``All A's must occur BEFORE all B's'' can be achieved 
- * by using Eugene's new ``FOR ALL'' operator...
+ * @author Ernst Oberortner
+ *
  */
 public class AllBefore 
-		extends BinaryPredicate {
+		extends BinaryPredicate 
+		implements PositioningPredicate {
 
-	public AllBefore(int a, int b) {
+	public AllBefore(Component a, Component b) {
 		super(a, b);
 	}
 
@@ -54,8 +51,8 @@ public class AllBefore
 	public Constraint toJaCoP(Store store, IntVar[][] variables) 
 				throws EugeneException {
 
-		int a = (int)this.getA();
-		int b = (int)this.getB();
+		int a = (int)this.getA().getId();
+		int b = (int)this.getB().getId();
 
 		int N = variables[Variables.PART].length;
 
@@ -76,31 +73,25 @@ public class AllBefore
 					pcB[j] = new XneqC(variables[Variables.PART][j], b);
 				}
 				
-//				store.impose(
-//						new IfThen(
-//								new XeqC(variables[i], a),
-//								new And(pcB)));
 				pc[i-1] = new IfThen(
 							new XeqC(variables[Variables.PART][i], a),
 							new And(pcB));
 			} else {
 
-				//store.impose(
-				//		new XneqC(variables[i], b));
-//				store.impose(
-//						new IfThen(
-//								new XeqC(variables[Variables.PART][i], a),
-//								new XneqC(variables[Variables.PART][i], b)));
-				
 				pc[i] = new IfThen(
 							new XeqC(variables[Variables.PART][i], a),
 							new XneqC(variables[Variables.PART][i], b));
 			}							
 		}			
 
-		
-//		return null;
 		return new And(pc);
+	}
+
+	@Override
+	public Constraint toJaCoPNot(Store store, IntVar[][] variables)
+			throws EugeneException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

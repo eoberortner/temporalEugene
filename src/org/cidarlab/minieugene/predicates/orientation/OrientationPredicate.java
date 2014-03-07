@@ -1,4 +1,4 @@
-package org.cidarlab.minieugene.predicates.counting;
+package org.cidarlab.minieugene.predicates.orientation;
 
 import org.cidarlab.minieugene.exception.EugeneException;
 
@@ -12,7 +12,5 @@ import JaCoP.core.Store;
  * @author Ernst Oberortner
  *
  */
-public interface CountingPredicate {
-
-
+public interface OrientationPredicate {
 }

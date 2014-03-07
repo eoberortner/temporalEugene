@@ -12,6 +12,9 @@ import org.cidarlab.minieugene.util.SolutionExporter;
 public class TestSuite {
 
 	public static void main(String[] args) {
+		
+		new TestSuite().test(new File("./tests/basic.eug"));
+		
 //		new TestSuite().test(new File("./tests/drives.eug"));
 //		new TestSuite().test(new File("./tests/interactions.eug"));
 
@@ -45,7 +48,7 @@ public class TestSuite {
 		
 //		new TestSuite().test(new File("./tests/then/then01"));
 
-		new TestSuite().test(new File("./tests/swati/test01"));
+//		new TestSuite().test(new File("./tests/swati/test01"));
 
 		/*** TESTS ***/
 //		new TestSuite().testAll("./tests");
@@ -60,7 +63,7 @@ public class TestSuite {
 			long t1 = System.nanoTime();
 			
 			MiniEugene me = new MiniEugene();				
-			me.executeScript(script, -1, -1);
+			me.executeScript(script, -1);
 
 //			MiniEugeneReturn mer = new MiniEugene(-1, -1, false).execute(script);
 			long tProcessing = System.nanoTime() - t1;

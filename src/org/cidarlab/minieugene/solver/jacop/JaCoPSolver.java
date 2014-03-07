@@ -6,9 +6,11 @@ import java.util.List;
 import org.cidarlab.minieugene.dom.Component;
 import org.cidarlab.minieugene.exception.EugeneException;
 import org.cidarlab.minieugene.predicates.Predicate;
+import org.cidarlab.minieugene.predicates.counting.CountingPredicate;
 import org.cidarlab.minieugene.predicates.interaction.Induces;
 import org.cidarlab.minieugene.predicates.interaction.InteractionPredicate;
 import org.cidarlab.minieugene.predicates.interaction.Represses;
+import org.cidarlab.minieugene.predicates.pairing.PairingPredicate;
 import org.cidarlab.minieugene.solver.Solver;
 import org.cidarlab.minieugene.symbol.SymbolTables;
 
@@ -48,6 +50,13 @@ public class JaCoPSolver
 			throws EugeneException {
 
 		this.N = N;
+		// If the user does not provide an N,
+		if(N == -1) {  
+			// then we calculate the minimum N
+			calculateMinN(predicates);
+		}
+		System.out.println(N);
+		
 		
     	/*
     	 * create the variables of the constraint solving problem
@@ -86,61 +95,10 @@ public class JaCoPSolver
     	return null;
 	}
     
-	private IntVar[][] model(Component[] symbols) 
+	private IntVar[][] model(Component[] components) 
 			throws EugeneException {
 		
-		IntVar[][] variables = new IntVar[3][N];
-				/*
-				 * 0 ... Parts
-				 * 1 ... Types
-				 * 2 ... Orientation
-				 */
-		
-		/*
-		 * PARTS
-		 */
-		variables[Variables.PART] = new IntVar[N];
-		variables[Variables.TYPE] = new IntVar[N];
-		variables[Variables.ORIENTATION] = new IntVar[N];
-		
-		/*
-		 * for every position i (0 <= i < N), 
-		 * we have three variables:
-		 * P_i ... parts
-		 * T_i ... types
-		 * O_i ... orientation
-		 */
-		for(int i=0; i<N; i++) {
-
-			variables[Variables.PART][i] = new IntVar(store, "P"+i);
-			variables[Variables.TYPE][i] = new IntVar(store, "T"+i);
-			variables[Variables.ORIENTATION][i] = new IntVar(store, "O"+i);
-			
-			PrimitiveConstraint[] pc = new PrimitiveConstraint[symbols.length];
-			
-			for(int j=0; j<symbols.length; j++) {						
-				variables[Variables.PART][i].addDom(symbols[j].getId(), symbols[j].getId());
-				variables[Variables.TYPE][i].addDom(symbols[j].getTypeId(), symbols[j].getTypeId());
-			
-				/*
-				 * we also impose constraints that part and type match
-				 * so we avoid various permutations were the part and type do not match
-				 */
-				pc[j] = new And(
-								new XeqC(variables[Variables.PART][i], symbols[j].getId()),
-								new XeqC(variables[Variables.TYPE][i], symbols[j].getTypeId()));
-			}
-			store.impose(new Or(pc));
-
-			variables[Variables.ORIENTATION][i].addDom(-1, -1);
-			variables[Variables.ORIENTATION][i].addDom( 1,  1);
-				/*
-				 * -1 ... reverse
-				 *  1 ... forward
-				 */			
-		}
-		
-		return variables;
+		return null;
 	}
 
 	public void imposeConstraints(IntVar[][] variables, Predicate[] predicates) 
@@ -150,8 +108,7 @@ public class JaCoPSolver
 		 */
 		for(int i=0; i<predicates.length; i++) {
 			try {
-				if(predicates[i] instanceof Represses ||
-						predicates[i] instanceof Induces) {
+				if(predicates[i] instanceof Represses || predicates[i] instanceof Induces) {
 					this.symbols.putInteraction((InteractionPredicate)predicates[i]);
 				} else {
 					Constraint constraint = predicates[i].toJaCoP(this.store, variables);
@@ -249,4 +206,16 @@ public class JaCoPSolver
 		return lst;
 	}
     
+	
+	private int calculateMinN(Predicate[] predicates) {
+		int minN = 1;
+		for(int i=0; i<predicates.length; i++) {
+			if(predicates[i] instanceof CountingPredicate) {
+				
+			} else if(predicates[i] instanceof PairingPredicate) {
+				
+			}
+		}
+		return minN;
+	}
 }
